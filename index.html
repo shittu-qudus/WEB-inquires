@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Commerce Website Discovery Questionnaire</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<style>
+  :root{
+    --bg:#0a0a0b;
+    --surface:#141416;
+    --surface-2:#1c1c1f;
+    --border:#2a2a2e;
+    --border-soft:#222226;
+    --text:#f3f2ef;
+    --text-muted:#8b8b91;
+    --text-faint:#5c5c61;
+    --white:#ffffff;
+  }
+
+  *{ -webkit-tap-highlight-color: transparent; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .font-display{ font-family: 'Fraunces', serif; }
+  .font-mono{ font-family: 'JetBrains Mono', monospace; }
+
+  .blueprint-grid{
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 75%);
+  }
+
+  .grain{
+    position: fixed; inset:0; pointer-events:none; z-index:1; opacity:.025;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .content-layer{ position: relative; z-index: 10; }
+
+  .panel{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 30px 60px -25px rgba(0,0,0,0.6);
+  }
+
+  .step{
+    display:none;
+    animation: stepIn .5s cubic-bezier(.16,1,.3,1) both;
+  }
+  .step.active{ display:block; }
+  @keyframes stepIn{
+    from{ opacity:0; transform: translateY(14px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .progress-track{
+    height: 2px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background: var(--white);
+    border-radius: 999px;
+    transition: width .55s cubic-bezier(.65,0,.35,1);
+  }
+
+  .field-input{
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .field-input::placeholder{ color: var(--text-faint); }
+  .field-input:focus{
+    outline:none;
+    border-color: var(--text-muted);
+    background: #1f1f22;
+  }
+  .field-input.error{ border-color:#9a4a4a; }
+
+  .field-error{
+    color:#c98a8a;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing:.01em;
+  }
+
+  .btn-primary{
+    background: var(--white);
+    color: #0a0a0b;
+    border-radius: 999px;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+  .btn-primary:hover:not(:disabled){ transform: translateY(-1px); opacity:.92; }
+  .btn-primary:active:not(:disabled){ transform: translateY(0); }
+  .btn-primary:disabled{ opacity: .6; cursor: not-allowed; }
+
+  .btn-ghost{
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    transition: all .2s ease;
+  }
+  .btn-ghost:hover{ color: var(--text); border-color: var(--text-muted); }
+
+  .yn-btn{
+    border:1px solid var(--border);
+    background: var(--surface-2);
+    border-radius: 10px;
+    transition: all .2s ease;
+    cursor: pointer;
+  }
+  .yn-btn:hover{ border-color: var(--text-muted); }
+  .yn-btn.selected{
+    background: var(--white);
+    color:#0a0a0b;
+    border-color: var(--white);
+  }
+
+  ::-webkit-scrollbar{ width:8px; }
+  ::-webkit-scrollbar-thumb{ background: var(--border); border-radius: 999px; }
+
+  .step-label{ letter-spacing: .12em; }
+
+  textarea.field-input{ resize: vertical; min-height: 120px; }
+
+  .hero-rise{ animation: rise .8s cubic-bezier(.16,1,.3,1) both; }
+  .hero-rise.d1{ animation-delay:.05s; }
+  .hero-rise.d2{ animation-delay:.15s; }
+  .hero-rise.d3{ animation-delay:.25s; }
+  .hero-rise.d4{ animation-delay:.35s; }
+  @keyframes rise{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="blueprint-grid"></div>
+<div class="grain"></div>
+
+<div class="content-layer">
+
+  <!-- HERO -->
+  <section id="hero" class="min-h-screen flex items-center justify-center px-6 py-24">
+    <div class="max-w-2xl w-full text-center">
+
+      <div class="hero-rise d1 inline-flex items-center gap-2 font-mono text-[11px] tracking-[.18em] text-[var(--text-muted)] border border-[var(--border)] rounded-full px-4 py-2 mb-10 uppercase">
+        <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+        E-Commerce Discovery
+      </div>
+
+      <h1 class="hero-rise d2 font-display text-5xl sm:text-6xl md:text-7xl font-medium leading-[1.05] tracking-tight mb-6">
+        Let's Plan<br><span class="italic font-light">Your Store</span>
+      </h1>
+
+      <p class="hero-rise d3 text-[var(--text-muted)] text-base sm:text-lg leading-relaxed max-w-lg mx-auto mb-10">
+        This short questionnaire helps us understand your business, what your online store needs to do, and your design preferences so we can build it right.
+      </p>
+
+      <div class="hero-rise d4 flex flex-col items-center gap-7">
+        <button onclick="goToForm()" class="btn-primary font-medium text-sm px-9 py-4 inline-flex items-center gap-2">
+          Start Questionnaire
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+        <div class="flex items-center gap-2 font-mono text-[11px] text-[var(--text-faint)] tracking-wide">
+          <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+          Estimated time — 5 to 10 minutes
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <section id="form-section" class="hidden min-h-screen px-4 sm:px-6 py-12 sm:py-16">
+    <div class="max-w-2xl mx-auto">
+
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-3">
+          <span id="step-label" class="font-mono text-[11px] tracking-[.14em] text-[var(--text-muted)] uppercase step-label">Step 01 / 09</span>
+          <span id="step-name" class="font-mono text-[11px] tracking-[.1em] text-[var(--text-faint)] uppercase">Business Info</span>
+        </div>
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill" style="width: 11%;"></div>
+        </div>
+      </div>
+
+      <div class="panel p-7 sm:p-10">
+        <form id="discovery-form" novalidate>
+
+          <!-- STEP 1: Business Information -->
+          <div class="step active" data-step="business">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Business information</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Tell us who you are and how to reach you.</p>
+
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Business name</label>
+                <input type="text" data-field="business.businessName" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Lagos Coffee Co.">
+              </div>
+              <div>
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Contact name</label>
+                <input type="text" data-field="business.contactName" class="field-input w-full px-4 py-3 text-sm" placeholder="Your full name">
+              </div>
+              <div>
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Email</label>
+                <input type="email" data-field="business.email" class="field-input w-full px-4 py-3 text-sm" placeholder="you@business.com">
+                <p class="field-error mt-1.5 hidden" data-error="business.email"></p>
+              </div>
+              <div>
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Phone number</label>
+                <input type="tel" data-field="business.phone" class="field-input w-full px-4 py-3 text-sm" placeholder="+234 ...">
+              </div>
+              <div>
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Industry</label>
+                <input type="text" data-field="business.industry" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Fashion, Food, Tech">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Business description</label>
+                <textarea data-field="business.description" class="field-input w-full px-4 py-3 text-sm" rows="3" placeholder="What does your business do, in a few sentences?"></textarea>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Existing website <span class="text-[var(--text-faint)] normal-case">(optional)</span></label>
+                <input type="text" data-field="business.existingWebsite" class="field-input w-full px-4 py-3 text-sm" placeholder="https://...">
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: Project Goals -->
+          <div class="step" data-step="goals">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">What should your store do?</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-6">Tell us, in your own words, what you need the website to do for your business.</p>
+
+            <textarea data-field="goals.purpose" class="field-input w-full px-4 py-3 text-sm mb-8" rows="4" placeholder="e.g. Let customers browse and buy products online, track their orders, and let me manage inventory and pricing myself..."></textarea>
+
+            <h3 class="font-display text-lg font-medium mb-3">Which of these goals matter most?</h3>
+            <div id="goals-grid" class="flex flex-wrap gap-2.5"></div>
+            <div id="goals-other-wrap" class="mt-4 hidden">
+              <input type="text" data-field="goals.otherText" class="field-input w-full px-4 py-3 text-sm" placeholder="Tell us more...">
+            </div>
+          </div>
+
+          <!-- STEP 3: Design Preferences -->
+          <div class="step" data-step="design">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Design preferences</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-6">What websites inspire you?</p>
+
+            <div class="space-y-2 mb-3" id="inspiration-list"></div>
+            <button type="button" onclick="addInspirationField()" class="btn-ghost text-xs font-mono px-4 py-2 inline-flex items-center gap-1.5 mb-8">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add another link
+            </button>
+
+            <p class="text-[11px] font-mono text-[var(--text-faint)] uppercase tracking-wider mb-3">For inspiration only — never copied directly</p>
+            <div class="flex flex-wrap gap-2 mb-8">
+              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">Nike</span>
+              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">Zara</span>
+              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">ASOS</span>
+              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">Apple</span>
+              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">Stripe</span>
+            </div>
+
+            <h3 class="font-display text-lg font-medium mb-3">Preferred style</h3>
+            <div id="style-grid" class="flex flex-wrap gap-2.5"></div>
+          </div>
+
+          <!-- STEP 4: Branding (Yes/No Questions) -->
+          <div class="step" data-step="branding">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Branding</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Tell us what assets you already have.</p>
+            <div id="branding-list" class="flex flex-col"></div>
+          </div>
+
+          <!-- STEP 5: E-commerce Features (Yes/No Questions) -->
+          <div class="step" data-step="ecommerce">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Store features</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Which features do you need?</p>
+            <div id="ecommerce-grid" class="flex flex-col"></div>
+          </div>
+
+          <!-- STEP 6: Admin Dashboard (Yes/No Questions) -->
+          <div class="step" data-step="admin">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Admin dashboard</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-8">What should you be able to do?</p>
+            <div id="admin-grid" class="flex flex-col"></div>
+          </div>
+
+          <!-- STEP 7: Payment (Yes/No Questions) -->
+          <div class="step" data-step="payment">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Payment methods</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Which payment options do you need?</p>
+            <div id="payment-grid" class="flex flex-col"></div>
+          </div>
+
+          <!-- STEP 8: Delivery -->
+          <div class="step" data-step="delivery">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Delivery</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Tell us how products will reach customers.</p>
+
+            <div class="space-y-5">
+              <div>
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Delivery areas</label>
+                <input type="text" data-field="delivery.areas" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Lagos mainland, Lagos island, nationwide">
+              </div>
+              <div>
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Shipping fee</label>
+                <input type="text" data-field="delivery.shippingFee" class="field-input w-full px-4 py-3 text-sm" placeholder="Flat rate, by location, free over a threshold...">
+              </div>
+              <div class="flex items-center justify-between py-1">
+                <span class="text-sm">Pickup option available?</span>
+                <div class="flex gap-2" data-yn="delivery.pickupOption">
+                  <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="yes">Yes</button>
+                  <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="no">No</button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between py-1">
+                <span class="text-sm">International shipping?</span>
+                <div class="flex gap-2" data-yn="delivery.internationalShipping">
+                  <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="yes">Yes</button>
+                  <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="no">No</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 9: Timeline -->
+          <div class="step" data-step="timeline">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Timeline</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-8">When do you need this live?</p>
+
+            <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-3">Select a timeline</label>
+            <div id="timeline-grid" class="grid grid-cols-2 gap-3"></div>
+            <p class="field-error mt-3 hidden" data-error="timeline.timeline"></p>
+          </div>
+
+          <!-- STEP 10: Notes -->
+          <div class="step" data-step="notes">
+            <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Anything else?</h2>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Additional notes, references, or requirements.</p>
+
+            <textarea data-field="notes.additional" class="field-input w-full px-4 py-3 text-sm" rows="6" placeholder="Share anything that will help us understand the project better..."></textarea>
+          </div>
+
+        </form>
+
+        <!-- Navigation -->
+        <div class="flex items-center justify-between mt-10 pt-7 border-t border-[var(--border-soft)]">
+          <button type="button" id="prev-btn" onclick="prevStep()" class="btn-ghost text-sm font-medium px-6 py-3 inline-flex items-center gap-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back
+          </button>
+          <button type="button" id="next-btn" onclick="nextStep()" class="btn-primary text-sm font-medium px-7 py-3 inline-flex items-center gap-2">
+            Continue <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <p id="submit-error" class="field-error text-right mt-3 hidden"></p>
+      </div>
+
+      <p class="text-center font-mono text-[10.5px] text-[var(--text-faint)] tracking-wider mt-6 uppercase">Your answers are only used to scope this project</p>
+    </div>
+  </section>
+
+  <!-- SUCCESS -->
+  <section id="success-section" class="hidden min-h-screen flex items-center justify-center px-6 py-24">
+    <div class="max-w-md w-full text-center">
+      <div class="w-16 h-16 rounded-full bg-[var(--white)] flex items-center justify-center mx-auto mb-8">
+        <i data-lucide="check" class="w-7 h-7 text-[#0a0a0b]"></i>
+      </div>
+      <h1 class="font-display text-4xl sm:text-5xl font-medium mb-4">Thank you</h1>
+      <p class="text-[var(--text-muted)] text-base leading-relaxed mb-10">
+        Your project requirements have been submitted successfully. I'll review everything and get back to you with a proposal and project timeline.
+      </p>
+      <button onclick="toggleSummary()" class="btn-ghost text-sm font-medium px-6 py-3 inline-flex items-center gap-2 mx-auto">
+        <i data-lucide="file-text" class="w-4 h-4"></i> View submitted answers
+      </button>
+      <pre id="summary-box" class="hidden text-left font-mono text-[11px] leading-relaxed text-[var(--text-muted)] bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 mt-6 overflow-auto max-h-96 whitespace-pre-wrap"></pre>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =========================================================================
+   FORM STATE — Formik-pattern (values / errors / touched)
+   ========================================================================= */
+const formik = {
+  values: {
+    business: { businessName:'', contactName:'', email:'', phone:'', industry:'', description:'', existingWebsite:'' },
+    goals: { purpose:'', selected:[], otherText:'' },
+    design: { inspirationLinks:[''], style:[] },
+    branding: { logo:'', brandColors:'', fonts:'', productImages:'', productDescriptions:'' },
+    ecommerce: { features:[] },
+    admin: { permissions:[] },
+    payment: { selected:[] },
+    delivery: { areas:'', shippingFee:'', pickupOption:'', internationalShipping:'' },
+    timeline: { timeline:'' },
+    notes: { additional:'' }
+  },
+  errors: {},
+  touched: {},
+
+  setFieldValue(path, value){
+    const [group, key] = path.split('.');
+    this.values[group][key] = value;
+  },
+  getFieldValue(path){
+    const [group, key] = path.split('.');
+    return this.values[group][key];
+  },
+  setFieldTouched(path){
+    this.touched[path] = true;
+  },
+  setFieldError(path, message){
+    this.errors[path] = message;
+  },
+  clearFieldError(path){
+    delete this.errors[path];
+  }
+};
+
+const STEP_ORDER = ['business','goals','design','branding','ecommerce','admin','payment','delivery','timeline','notes'];
+const STEP_NAMES = {
+  business:'Business Info', goals:'What It Should Do', design:'Design',
+  branding:'Branding', ecommerce:'Store Features', admin:'Admin Access',
+  payment:'Payment Methods', delivery:'Delivery', timeline:'Timeline', notes:'Notes'
+};
+let currentIndex = 0;
+
+function activeSteps(){
+  return STEP_ORDER;
+}
+
+/* Option Data */
+const GOALS = ['Increase sales','Generate leads','Sell online','Improve branding','Accept online payments','Build customer trust','Showcase products','Other'];
+const STYLES = ['Minimal','Luxury','Modern','Elegant','Playful','Bold','Premium','Dark Theme','Light Theme'];
+const BRANDING_ITEMS = [
+  { key:'logo', label:'Do you already have a logo?' },
+  { key:'brandColors', label:'Do you already have brand colors?' },
+  { key:'fonts', label:'Do you already have brand fonts?' },
+  { key:'productImages', label:'Do you already have product images?' },
+  { key:'productDescriptions', label:'Do you already have product descriptions?' }
+];
+const ECOMMERCE_FEATURES = ['Shopping Cart','Wishlist','Product Search','Product Filters','Discount Codes','Customer Accounts','Reviews','Newsletter','Inventory Management','Admin Dashboard','Order Tracking','Stock Management','Sales Analytics','Product Variants','Multiple Images','Related Products','Recently Viewed'];
+const ADMIN_PERMISSIONS = ['Add Products','Edit Products','Delete Products','Upload Images','Update Prices','Manage Discounts','Manage Inventory','Manage Categories','Manage Orders','View Customers','Generate Reports','Manage Homepage Banner'];
+const PAYMENT_OPTIONS = [
+  { v:'Paystack', icon:'credit-card' }, { v:'Flutterwave', icon:'credit-card' },
+  { v:'Stripe', icon:'credit-card' }, { v:'Bank Transfer', icon:'landmark' },
+  { v:'Cash on Delivery', icon:'banknote' }, { v:'Other', icon:'more-horizontal' }
+];
+const TIMELINE_OPTIONS = [
+  { v:'Urgent', icon:'zap' }, { v:'2 Weeks', icon:'calendar' },
+  { v:'1 Month', icon:'calendar-days' }, { v:'Flexible', icon:'infinity' }
+];
+
+/* Render Functions */
+function renderPillGroup(containerId, items, groupPath){
+  const el = document.getElementById(containerId);
+  el.innerHTML = items.map(v => `<span class="pill px-4 py-2.5 text-xs font-medium border border-[var(--border)] rounded-lg cursor-pointer" data-value="${escapeAttr(v)}" data-group="${groupPath}">${v}</span>`).join('');
+  el.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      pill.classList.toggle('selected');
+      const [g,k] = groupPath.split('.');
+      const value = pill.dataset.value;
+      const arr = formik.values[g][k];
+      const i = arr.indexOf(value);
+      if(i > -1) arr.splice(i,1); else arr.push(value);
+      if(groupPath === 'goals.selected'){
+        document.getElementById('goals-other-wrap').classList.toggle('hidden', !arr.includes('Other'));
+      }
+    });
+  });
+}
+
+function renderSelectableGrid(containerId, items, groupPath, mode, iconFn){
+  const el = document.getElementById(containerId);
+  el.innerHTML = items.map(item => {
+    const value = item.v || item;
+    const icon = iconFn ? iconFn(item) : null;
+    return `
+      <div class="select-card p-4 sm:p-5 border border-[var(--border)] rounded-lg cursor-pointer hover:border-[var(--text-muted)] transition-all" data-value="${escapeAttr(value)}" data-group="${groupPath}" data-mode="${mode}">
+        <div class="flex items-center gap-3">
+          ${icon ? `<i data-lucide="${icon}" class="w-5 h-5 text-[var(--text-muted)]"></i>` : ''}
+          <span class="text-sm font-medium">${value}</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  el.querySelectorAll('.select-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const group = card.dataset.group;
+      const mode = card.dataset.mode;
+      const value = card.dataset.value;
+      if(mode === 'single'){
+        el.querySelectorAll('.select-card').forEach(c => c.classList.remove('selected', 'bg-white', 'text-black', 'border-white'));
+        card.classList.add('selected', 'bg-white', 'text-black', 'border-white');
+        formik.setFieldValue(group, value);
+      }
+    });
+  });
+  lucide.createIcons();
+}
+
+function renderYesNoChecklist(containerId, items, groupPath, questionFn){
+  const el = document.getElementById(containerId);
+  el.innerHTML = items.map(item => {
+    const value = typeof item === 'string' ? item : item.v;
+    return `
+      <div class="flex items-center justify-between gap-4 py-3 border-b border-[var(--border-soft)] last:border-0">
+        <span class="text-sm leading-snug">${questionFn(value)}</span>
+        <div class="flex gap-2 shrink-0" data-yn-array="${groupPath}" data-yn-value="${escapeAttr(value)}">
+          <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="yes">Yes</button>
+          <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="no">No</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  el.querySelectorAll('[data-yn-array]').forEach(group => {
+    const path = group.dataset.ynArray;
+    const value = group.dataset.ynValue;
+    const [gg, kk] = path.split('.');
+    group.querySelectorAll('.yn-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        const arr = formik.values[gg][kk];
+        const idx = arr.indexOf(value);
+        if(btn.dataset.value === 'yes'){
+          if(idx === -1) arr.push(value);
+        } else if(idx > -1){
+          arr.splice(idx, 1);
+        }
+      });
+    });
+  });
+}
+
+function renderBranding(){
+  const el = document.getElementById('branding-list');
+  el.innerHTML = BRANDING_ITEMS.map(item => `
+    <div class="flex items-center justify-between py-3 border-b border-[var(--border-soft)] last:border-0">
+      <span class="text-sm">${item.label}</span>
+      <div class="flex gap-2" data-yn="branding.${item.key}">
+        <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="yes">Yes</button>
+        <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="no">No</button>
+      </div>
+    </div>`).join('');
+  renderYesNoToggles();
+}
+
+function renderYesNoToggles(){
+  document.querySelectorAll('[data-yn]').forEach(group => {
+    const path = group.dataset.yn;
+    group.querySelectorAll('.yn-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        formik.setFieldValue(path, btn.dataset.value);
+      });
+    });
+  });
+}
+
+function escapeAttr(s){ return s.replace(/"/g,'&quot;'); }
+
+function addInspirationField(){
+  formik.values.design.inspirationLinks.push('');
+  renderInspirationList();
+}
+
+function removeInspirationField(idx){
+  formik.values.design.inspirationLinks.splice(idx,1);
+  renderInspirationList();
+}
+
+function renderInspirationList(){
+  const el = document.getElementById('inspiration-list');
+  el.innerHTML = formik.values.design.inspirationLinks.map((val, idx) => `
+    <div class="flex items-center gap-2">
+      <input type="text" value="${escapeAttr(val)}" data-inspiration-idx="${idx}" class="field-input flex-1 px-4 py-3 text-sm" placeholder="https://example.com">
+      ${formik.values.design.inspirationLinks.length > 1 ? `<button type="button" onclick="removeInspirationField(${idx})" class="text-[var(--text-faint)] hover:text-[var(--text)] p-2"><i data-lucide="x" class="w-4 h-4"></i></button>` : ''}
+    </div>`).join('');
+  el.querySelectorAll('[data-inspiration-idx]').forEach(input => {
+    input.addEventListener('input', () => {
+      formik.values.design.inspirationLinks[Number(input.dataset.inspirationIdx)] = input.value;
+    });
+  });
+  lucide.createIcons();
+}
+
+function bindTextFields(){
+  document.querySelectorAll('[data-field]').forEach(input => {
+    const path = input.dataset.field;
+    input.value = formik.getFieldValue(path) || '';
+    input.addEventListener('input', () => {
+      formik.setFieldValue(path, input.value);
+      clearError(path);
+    });
+    input.addEventListener('blur', () => formik.setFieldTouched(path));
+  });
+}
+
+function clearError(path){
+  formik.clearFieldError(path);
+  const errEl = document.querySelector(`[data-error="${path}"]`);
+  const inputEl = document.querySelector(`[data-field="${path}"]`);
+  if(errEl) errEl.classList.add('hidden');
+  if(inputEl) inputEl.classList.remove('error');
+}
+
+/* Validation */
+const REQUIRED_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateStep(stepKey){
+  const errs = {};
+  const v = formik.values;
+
+  if(stepKey === 'business'){
+    if(v.business.email.trim() && !REQUIRED_EMAIL.test(v.business.email)){
+      errs['business.email'] = 'That email doesn\'t look quite right.';
+    }
+  }
+  return errs;
+}
+
+function showStepErrors(errs){
+  Object.keys(errs).forEach(path => {
+    formik.setFieldTouched(path);
+    formik.setFieldError(path, errs[path]);
+    const errEl = document.querySelector(`[data-error="${path}"]`);
+    const inputEl = document.querySelector(`[data-field="${path}"]`);
+    if(errEl){ errEl.textContent = errs[path]; errEl.classList.remove('hidden'); }
+    if(inputEl) inputEl.classList.add('error');
+  });
+}
+
+/* Navigation */
+function goToForm(){
+  document.getElementById('hero').classList.add('hidden');
+  document.getElementById('form-section').classList.remove('hidden');
+  initialRender();
+  window.scrollTo({top:0});
+}
+
+function initialRender(){
+  renderPillGroup('goals-grid', GOALS, 'goals.selected');
+  renderPillGroup('style-grid', STYLES, 'design.style');
+  renderInspirationList();
+  renderBranding();
+  renderYesNoChecklist('ecommerce-grid', ECOMMERCE_FEATURES, 'ecommerce.features', v => `Do you need ${v.toLowerCase()}?`);
+  renderYesNoChecklist('admin-grid', ADMIN_PERMISSIONS, 'admin.permissions', v => `Should you be able to ${v.toLowerCase()}?`);
+  renderYesNoChecklist('payment-grid', PAYMENT_OPTIONS, 'payment.selected', v => v === 'Other' ? 'Need another payment method not listed?' : `Accept payments via ${v}?`);
+  renderSelectableGrid('timeline-grid', TIMELINE_OPTIONS, 'timeline.timeline', 'single', i => i.icon);
+  renderYesNoToggles();
+  bindTextFields();
+  lucide.createIcons();
+  updateStepMeta();
+}
+
+function showStep(stepKey){
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.querySelector(`.step[data-step="${stepKey}"]`).classList.add('active');
+}
+
+function updateStepMeta(){
+  const steps = activeSteps();
+  if(currentIndex > steps.length - 1) currentIndex = steps.length - 1;
+  const stepKey = steps[currentIndex];
+  showStep(stepKey);
+  document.getElementById('step-label').textContent = `Step ${String(currentIndex+1).padStart(2,'0')} / ${String(steps.length).padStart(2,'0')}`;
+  document.getElementById('step-name').textContent = STEP_NAMES[stepKey];
+  document.getElementById('progress-fill').style.width = `${((currentIndex+1)/steps.length)*100}%`;
+  document.getElementById('prev-btn').style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+
+  const isLast = currentIndex === steps.length - 1;
+  document.getElementById('next-btn').innerHTML = isLast
+    ? `Submit <i data-lucide="check" class="w-4 h-4"></i>`
+    : `Continue <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+  lucide.createIcons();
+}
+
+function nextStep(){
+  const steps = activeSteps();
+  const stepKey = steps[currentIndex];
+  const errs = validateStep(stepKey);
+
+  if(Object.keys(errs).length > 0){
+    showStepErrors(errs);
+    document.querySelector(`.step[data-step="${stepKey}"]`).scrollIntoView({behavior:'smooth', block:'start'});
+    return;
+  }
+
+  if(currentIndex < steps.length - 1){
+    currentIndex++;
+    updateStepMeta();
+    document.querySelector('.panel').scrollIntoView({behavior:'smooth', block:'start'});
+  } else {
+    submitForm();
+  }
+}
+
+function prevStep(){
+  if(currentIndex > 0){
+    currentIndex--;
+    updateStepMeta();
+  }
+}
+
+/* =========================================================================
+   FORMSPREE SUBMISSION
+   Replace YOUR_FORM_ID with your Formspree form ID from https://formspree.io
+   ========================================================================= */
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xzdlaljb';
+
+async function submitForm(){
+  const nextBtn = document.getElementById('next-btn');
+  const errorEl = document.getElementById('submit-error');
+  errorEl.classList.add('hidden');
+
+  const originalLabel = nextBtn.innerHTML;
+  nextBtn.disabled = true;
+  nextBtn.style.opacity = '.6';
+  nextBtn.innerHTML = `Submitting...`;
+
+  const payload = {
+    business_name: formik.values.business.businessName,
+    contact_name: formik.values.business.contactName,
+    email: formik.values.business.email,
+    phone: formik.values.business.phone,
+    _replyto: formik.values.business.email,
+    _subject: `New e-commerce project discovery — ${formik.values.business.businessName || 'Untitled'}`,
+    full_submission: JSON.stringify(formik.values, null, 2)
+  };
+
+  try{
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if(!res.ok) throw new Error('Submission failed');
+
+    document.getElementById('form-section').classList.add('hidden');
+    document.getElementById('success-section').classList.remove('hidden');
+    document.getElementById('summary-box').textContent = JSON.stringify(formik.values, null, 2);
+    lucide.createIcons();
+    window.scrollTo({top:0});
+  } catch(err){
+    errorEl.textContent = 'Something went wrong. Check your connection and try again.';
+    errorEl.classList.remove('hidden');
+  } finally {
+    nextBtn.disabled = false;
+    nextBtn.style.opacity = '';
+    nextBtn.innerHTML = originalLabel;
+    lucide.createIcons();
+  }
+}
+
+function toggleSummary(){
+  document.getElementById('summary-box').classList.toggle('hidden');
+}
+
+lucide.createIcons();
+</script>
+</body>
+</html>
