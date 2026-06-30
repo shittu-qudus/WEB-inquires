@@ -1,203 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>E-Commerce Website Discovery Questionnaire</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E‑Commerce Discovery · Questionnaire</title>
+  <!-- Fonts (unchanged) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Tailwind (unchanged) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide (unchanged) -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    /* ===== all original styles preserved ===== */
+    :root{
+      --bg:#0a0a0b;
+      --surface:#141416;
+      --surface-2:#1c1c1f;
+      --border:#2a2a2e;
+      --border-soft:#222226;
+      --text:#f3f2ef;
+      --text-muted:#8b8b91;
+      --text-faint:#5c5c61;
+      --white:#ffffff;
+    }
+    *{ -webkit-tap-highlight-color: transparent; }
+    html{ scroll-behavior: smooth; }
+    body{
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .font-display{ font-family: 'Fraunces', serif; }
+    .font-mono{ font-family: 'JetBrains Mono', monospace; }
+    .blueprint-grid{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 75%);
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 75%);
+    }
+    .grain{
+      position: fixed; inset:0; pointer-events:none; z-index:1; opacity:.025;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .content-layer{ position: relative; z-index: 10; }
+    .panel{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 30px 60px -25px rgba(0,0,0,0.6);
+    }
+    .step{
+      display:none;
+      animation: stepIn .5s cubic-bezier(.16,1,.3,1) both;
+    }
+    .step.active{ display:block; }
+    @keyframes stepIn{
+      from{ opacity:0; transform: translateY(14px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+    .progress-track{
+      height: 2px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill{
+      height:100%;
+      background: var(--white);
+      border-radius: 999px;
+      transition: width .55s cubic-bezier(.65,0,.35,1);
+    }
+    .field-input{
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      transition: border-color .2s ease, background .2s ease;
+    }
+    .field-input::placeholder{ color: var(--text-faint); }
+    .field-input:focus{
+      outline:none;
+      border-color: var(--text-muted);
+      background: #1f1f22;
+    }
+    .field-input.error{ border-color:#9a4a4a; }
+    .field-error{
+      color:#c98a8a;
+      font-family:'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      letter-spacing:.01em;
+    }
+    .btn-primary{
+      background: var(--white);
+      color: #0a0a0b;
+      border-radius: 999px;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+    .btn-primary:hover:not(:disabled){ transform: translateY(-1px); opacity:.92; }
+    .btn-primary:active:not(:disabled){ transform: translateY(0); }
+    .btn-primary:disabled{ opacity: .6; cursor: not-allowed; }
+    .btn-ghost{
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      transition: all .2s ease;
+    }
+    .btn-ghost:hover{ color: var(--text); border-color: var(--text-muted); }
+    .yn-btn{
+      border:1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: 10px;
+      transition: all .2s ease;
+      cursor: pointer;
+    }
+    .yn-btn:hover{ border-color: var(--text-muted); }
+    .yn-btn.selected{
+      background: var(--white);
+      color:#0a0a0b;
+      border-color: var(--white);
+    }
+    ::-webkit-scrollbar{ width:8px; }
+    ::-webkit-scrollbar-thumb{ background: var(--border); border-radius: 999px; }
+    .step-label{ letter-spacing: .12em; }
+    textarea.field-input{ resize: vertical; min-height: 120px; }
+    .hero-rise{ animation: rise .8s cubic-bezier(.16,1,.3,1) both; }
+    .hero-rise.d1{ animation-delay:.05s; }
+    .hero-rise.d2{ animation-delay:.15s; }
+    .hero-rise.d3{ animation-delay:.25s; }
+    .hero-rise.d4{ animation-delay:.35s; }
+    @keyframes rise{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+    @media (prefers-reduced-motion: reduce){
+      *{ animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-<!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Lucide icons -->
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
-<style>
-  :root{
-    --bg:#0a0a0b;
-    --surface:#141416;
-    --surface-2:#1c1c1f;
-    --border:#2a2a2e;
-    --border-soft:#222226;
-    --text:#f3f2ef;
-    --text-muted:#8b8b91;
-    --text-faint:#5c5c61;
-    --white:#ffffff;
-  }
-
-  *{ -webkit-tap-highlight-color: transparent; }
-
-  html{ scroll-behavior: smooth; }
-
-  body{
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  .font-display{ font-family: 'Fraunces', serif; }
-  .font-mono{ font-family: 'JetBrains Mono', monospace; }
-
-  .blueprint-grid{
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-    background-size: 48px 48px;
-    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 75%);
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 75%);
-  }
-
-  .grain{
-    position: fixed; inset:0; pointer-events:none; z-index:1; opacity:.025;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  .content-layer{ position: relative; z-index: 10; }
-
-  .panel{
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 30px 60px -25px rgba(0,0,0,0.6);
-  }
-
-  .step{
-    display:none;
-    animation: stepIn .5s cubic-bezier(.16,1,.3,1) both;
-  }
-  .step.active{ display:block; }
-  @keyframes stepIn{
-    from{ opacity:0; transform: translateY(14px); }
-    to{ opacity:1; transform: translateY(0); }
-  }
-
-  .progress-track{
-    height: 2px;
-    background: var(--border);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .progress-fill{
-    height:100%;
-    background: var(--white);
-    border-radius: 999px;
-    transition: width .55s cubic-bezier(.65,0,.35,1);
-  }
-
-  .field-input{
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    transition: border-color .2s ease, background .2s ease;
-  }
-  .field-input::placeholder{ color: var(--text-faint); }
-  .field-input:focus{
-    outline:none;
-    border-color: var(--text-muted);
-    background: #1f1f22;
-  }
-  .field-input.error{ border-color:#9a4a4a; }
-
-  .field-error{
-    color:#c98a8a;
-    font-family:'JetBrains Mono', monospace;
-    font-size: 11.5px;
-    letter-spacing:.01em;
-  }
-
-  .btn-primary{
-    background: var(--white);
-    color: #0a0a0b;
-    border-radius: 999px;
-    transition: transform .2s ease, opacity .2s ease;
-  }
-  .btn-primary:hover:not(:disabled){ transform: translateY(-1px); opacity:.92; }
-  .btn-primary:active:not(:disabled){ transform: translateY(0); }
-  .btn-primary:disabled{ opacity: .6; cursor: not-allowed; }
-
-  .btn-ghost{
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    transition: all .2s ease;
-  }
-  .btn-ghost:hover{ color: var(--text); border-color: var(--text-muted); }
-
-  .yn-btn{
-    border:1px solid var(--border);
-    background: var(--surface-2);
-    border-radius: 10px;
-    transition: all .2s ease;
-    cursor: pointer;
-  }
-  .yn-btn:hover{ border-color: var(--text-muted); }
-  .yn-btn.selected{
-    background: var(--white);
-    color:#0a0a0b;
-    border-color: var(--white);
-  }
-
-  ::-webkit-scrollbar{ width:8px; }
-  ::-webkit-scrollbar-thumb{ background: var(--border); border-radius: 999px; }
-
-  .step-label{ letter-spacing: .12em; }
-
-  textarea.field-input{ resize: vertical; min-height: 120px; }
-
-  .hero-rise{ animation: rise .8s cubic-bezier(.16,1,.3,1) both; }
-  .hero-rise.d1{ animation-delay:.05s; }
-  .hero-rise.d2{ animation-delay:.15s; }
-  .hero-rise.d3{ animation-delay:.25s; }
-  .hero-rise.d4{ animation-delay:.35s; }
-  @keyframes rise{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  }
-</style>
+    /* clickable pills & cards */
+    .pill {
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .pill.selected {
+      background: var(--white);
+      color: #0a0a0b;
+      border-color: var(--white);
+    }
+    .select-card {
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .select-card.selected {
+      background: white;
+      color: black;
+      border-color: white;
+    }
+    /* inspiration tags clickable */
+    .inspo-tag {
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      display: inline-block;
+    }
+    .inspo-tag:hover {
+      background: var(--surface-2);
+      border-color: var(--text-muted);
+    }
+    .inspo-tag.selected {
+      background: var(--white);
+      color: #0a0a0b;
+      border-color: var(--white);
+    }
+  </style>
 </head>
-<body class="min-h-screen">
-
+<body>
 <div class="blueprint-grid"></div>
 <div class="grain"></div>
 
 <div class="content-layer">
-
-  <!-- HERO -->
+  <!-- HERO (unchanged) -->
   <section id="hero" class="min-h-screen flex items-center justify-center px-6 py-24">
     <div class="max-w-2xl w-full text-center">
-
       <div class="hero-rise d1 inline-flex items-center gap-2 font-mono text-[11px] tracking-[.18em] text-[var(--text-muted)] border border-[var(--border)] rounded-full px-4 py-2 mb-10 uppercase">
         <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
         E-Commerce Discovery
       </div>
-
       <h1 class="hero-rise d2 font-display text-5xl sm:text-6xl md:text-7xl font-medium leading-[1.05] tracking-tight mb-6">
         Let's Plan<br><span class="italic font-light">Your Store</span>
       </h1>
-
       <p class="hero-rise d3 text-[var(--text-muted)] text-base sm:text-lg leading-relaxed max-w-lg mx-auto mb-10">
         This short questionnaire helps us understand your business, what your online store needs to do, and your design preferences so we can build it right.
       </p>
-
       <div class="hero-rise d4 flex flex-col items-center gap-7">
         <button onclick="goToForm()" class="btn-primary font-medium text-sm px-9 py-4 inline-flex items-center gap-2">
           Start Questionnaire
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
-
         <div class="flex items-center gap-2 font-mono text-[11px] text-[var(--text-faint)] tracking-wide">
           <i data-lucide="clock" class="w-3.5 h-3.5"></i>
           Estimated time — 5 to 10 minutes
@@ -209,7 +217,6 @@
   <!-- FORM -->
   <section id="form-section" class="hidden min-h-screen px-4 sm:px-6 py-12 sm:py-16">
     <div class="max-w-2xl mx-auto">
-
       <div class="mb-10">
         <div class="flex items-center justify-between mb-3">
           <span id="step-label" class="font-mono text-[11px] tracking-[.14em] text-[var(--text-muted)] uppercase step-label">Step 01 / 09</span>
@@ -222,37 +229,40 @@
 
       <div class="panel p-7 sm:p-10">
         <form id="discovery-form" novalidate>
-
-          <!-- STEP 1: Business Information -->
+          <!-- STEP 1: Business (unchanged) -->
           <div class="step active" data-step="business">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Business information</h2>
             <p class="text-[var(--text-muted)] text-sm mb-8">Tell us who you are and how to reach you.</p>
-
             <div class="grid sm:grid-cols-2 gap-5">
               <div class="sm:col-span-2">
-                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Business name</label>
-                <input type="text" data-field="business.businessName" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Lagos Coffee Co.">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Business name *</label>
+                <input type="text" data-field="business.businessName" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Lagos Coffee Co." required>
+                <p class="field-error mt-1.5 hidden" data-error="business.businessName">Business name is required</p>
               </div>
               <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Contact name</label>
-                <input type="text" data-field="business.contactName" class="field-input w-full px-4 py-3 text-sm" placeholder="Your full name">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Contact name *</label>
+                <input type="text" data-field="business.contactName" class="field-input w-full px-4 py-3 text-sm" placeholder="Your full name" required>
+                <p class="field-error mt-1.5 hidden" data-error="business.contactName">Contact name is required</p>
               </div>
               <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Email</label>
-                <input type="email" data-field="business.email" class="field-input w-full px-4 py-3 text-sm" placeholder="you@business.com">
-                <p class="field-error mt-1.5 hidden" data-error="business.email"></p>
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Email *</label>
+                <input type="email" data-field="business.email" class="field-input w-full px-4 py-3 text-sm" placeholder="you@business.com" required>
+                <p class="field-error mt-1.5 hidden" data-error="business.email">Valid email is required</p>
               </div>
               <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Phone number</label>
-                <input type="tel" data-field="business.phone" class="field-input w-full px-4 py-3 text-sm" placeholder="+234 ...">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Phone number *</label>
+                <input type="tel" data-field="business.phone" class="field-input w-full px-4 py-3 text-sm" placeholder="+234 ..." required>
+                <p class="field-error mt-1.5 hidden" data-error="business.phone">Phone number is required</p>
               </div>
               <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Industry</label>
-                <input type="text" data-field="business.industry" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Fashion, Food, Tech">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Industry *</label>
+                <input type="text" data-field="business.industry" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Fashion, Food, Tech" required>
+                <p class="field-error mt-1.5 hidden" data-error="business.industry">Industry is required</p>
               </div>
               <div class="sm:col-span-2">
-                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Business description</label>
-                <textarea data-field="business.description" class="field-input w-full px-4 py-3 text-sm" rows="3" placeholder="What does your business do, in a few sentences?"></textarea>
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Business description *</label>
+                <textarea data-field="business.description" class="field-input w-full px-4 py-3 text-sm" rows="3" placeholder="What does your business do, in a few sentences?" required></textarea>
+                <p class="field-error mt-1.5 hidden" data-error="business.description">Business description is required</p>
               </div>
               <div class="sm:col-span-2">
                 <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Existing website <span class="text-[var(--text-faint)] normal-case">(optional)</span></label>
@@ -261,120 +271,126 @@
             </div>
           </div>
 
-          <!-- STEP 2: Project Goals -->
+          <!-- STEP 2: Goals -->
           <div class="step" data-step="goals">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">What should your store do?</h2>
             <p class="text-[var(--text-muted)] text-sm mb-6">Tell us, in your own words, what you need the website to do for your business.</p>
-
-            <textarea data-field="goals.purpose" class="field-input w-full px-4 py-3 text-sm mb-8" rows="4" placeholder="e.g. Let customers browse and buy products online, track their orders, and let me manage inventory and pricing myself..."></textarea>
-
-            <h3 class="font-display text-lg font-medium mb-3">Which of these goals matter most?</h3>
+            <textarea data-field="goals.purpose" class="field-input w-full px-4 py-3 text-sm mb-8" rows="4" placeholder="e.g. Let customers browse and buy products online, track their orders, and let me manage inventory and pricing myself..." required></textarea>
+            <p class="field-error mt-1.5 hidden" data-error="goals.purpose">Please describe what your store should do</p>
+            
+            <h3 class="font-display text-lg font-medium mb-3">Which of these goals matter most? (select at least one) *</h3>
             <div id="goals-grid" class="flex flex-wrap gap-2.5"></div>
+            <p class="field-error mt-2 hidden" data-error="goals.selected">Please select at least one goal</p>
             <div id="goals-other-wrap" class="mt-4 hidden">
               <input type="text" data-field="goals.otherText" class="field-input w-full px-4 py-3 text-sm" placeholder="Tell us more...">
             </div>
           </div>
 
-          <!-- STEP 3: Design Preferences -->
+          <!-- STEP 3: Design (fixed inspiration tags clickable) -->
           <div class="step" data-step="design">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Design preferences</h2>
-            <p class="text-[var(--text-muted)] text-sm mb-6">What websites inspire you?</p>
-
+            <p class="text-[var(--text-muted)] text-sm mb-6">What websites inspire you? (at least one) *</p>
             <div class="space-y-2 mb-3" id="inspiration-list"></div>
             <button type="button" onclick="addInspirationField()" class="btn-ghost text-xs font-mono px-4 py-2 inline-flex items-center gap-1.5 mb-8">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add another link
             </button>
-
+            <p class="field-error mt-1.5 hidden" data-error="design.inspirationLinks">Please add at least one inspiration link</p>
+            
             <p class="text-[11px] font-mono text-[var(--text-faint)] uppercase tracking-wider mb-3">For inspiration only — never copied directly</p>
-            <div class="flex flex-wrap gap-2 mb-8">
-              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">Nike</span>
-              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">Zara</span>
-              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">ASOS</span>
-              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">Apple</span>
-              <span class="px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg">Stripe</span>
+            <!-- CLICKABLE INSPIRATION TAGS (replaced stores) -->
+            <div class="flex flex-wrap gap-2 mb-8" id="inspiration-tags">
+              <span class="inspo-tag px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg" data-store="yl collective">yl collective</span>
+              <span class="inspo-tag px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg" data-store="go cracy">go cracy</span>
+              <span class="inspo-tag px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg" data-store="zztw">zztw</span>
+              <span class="inspo-tag px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg" data-store="zara">zara</span>
+                <span class="inspo-tag px-3.5 py-2 text-xs border border-[var(--border)] rounded-lg" data-store="nike">HighFashion</span>
             </div>
 
-            <h3 class="font-display text-lg font-medium mb-3">Preferred style</h3>
+            <h3 class="font-display text-lg font-medium mb-3">Preferred style (select at least one) *</h3>
             <div id="style-grid" class="flex flex-wrap gap-2.5"></div>
+            <p class="field-error mt-2 hidden" data-error="design.style">Please select at least one style</p>
           </div>
 
-          <!-- STEP 4: Branding (Yes/No Questions) -->
+          <!-- STEP 4: Branding -->
           <div class="step" data-step="branding">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Branding</h2>
-            <p class="text-[var(--text-muted)] text-sm mb-8">Tell us what assets you already have.</p>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Tell us what assets you already have. (answer all) *</p>
             <div id="branding-list" class="flex flex-col"></div>
+            <p class="field-error mt-3 hidden" data-error="branding">Please answer all branding questions</p>
           </div>
 
-          <!-- STEP 5: E-commerce Features (Yes/No Questions) -->
+          <!-- STEP 5: Ecommerce -->
           <div class="step" data-step="ecommerce">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Store features</h2>
-            <p class="text-[var(--text-muted)] text-sm mb-8">Which features do you need?</p>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Which features do you need? (select at least one) *</p>
             <div id="ecommerce-grid" class="flex flex-col"></div>
+            <p class="field-error mt-2 hidden" data-error="ecommerce.features">Please select at least one feature</p>
           </div>
 
-          <!-- STEP 6: Admin Dashboard (Yes/No Questions) -->
+          <!-- STEP 6: Admin -->
           <div class="step" data-step="admin">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Admin dashboard</h2>
-            <p class="text-[var(--text-muted)] text-sm mb-8">What should you be able to do?</p>
+            <p class="text-[var(--text-muted)] text-sm mb-8">What should you be able to do? (select at least one) *</p>
             <div id="admin-grid" class="flex flex-col"></div>
+            <p class="field-error mt-2 hidden" data-error="admin.permissions">Please select at least one admin permission</p>
           </div>
 
-          <!-- STEP 7: Payment (Yes/No Questions) -->
+          <!-- STEP 7: Payment -->
           <div class="step" data-step="payment">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Payment methods</h2>
-            <p class="text-[var(--text-muted)] text-sm mb-8">Which payment options do you need?</p>
+            <p class="text-[var(--text-muted)] text-sm mb-8">Which payment options do you need? (select at least one) *</p>
             <div id="payment-grid" class="flex flex-col"></div>
+            <p class="field-error mt-2 hidden" data-error="payment.selected">Please select at least one payment method</p>
           </div>
 
           <!-- STEP 8: Delivery -->
           <div class="step" data-step="delivery">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Delivery</h2>
-            <p class="text-[var(--text-muted)] text-sm mb-8">Tell us how products will reach customers.</p>
-
+            <p class="text-[var(--text-muted)] text-sm mb-8">Tell us how products will reach customers. (all fields required) *</p>
             <div class="space-y-5">
               <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Delivery areas</label>
-                <input type="text" data-field="delivery.areas" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Lagos mainland, Lagos island, nationwide">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Delivery areas *</label>
+                <input type="text" data-field="delivery.areas" class="field-input w-full px-4 py-3 text-sm" placeholder="e.g. Lagos mainland, Lagos island, nationwide" required>
+                <p class="field-error mt-1.5 hidden" data-error="delivery.areas">Delivery areas are required</p>
               </div>
               <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Shipping fee</label>
-                <input type="text" data-field="delivery.shippingFee" class="field-input w-full px-4 py-3 text-sm" placeholder="Flat rate, by location, free over a threshold...">
+                <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-2">Shipping fee *</label>
+                <input type="text" data-field="delivery.shippingFee" class="field-input w-full px-4 py-3 text-sm" placeholder="Flat rate, by location, free over a threshold..." required>
+                <p class="field-error mt-1.5 hidden" data-error="delivery.shippingFee">Shipping fee info is required</p>
               </div>
               <div class="flex items-center justify-between py-1">
-                <span class="text-sm">Pickup option available?</span>
+                <span class="text-sm">Pickup option available? *</span>
                 <div class="flex gap-2" data-yn="delivery.pickupOption">
                   <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="yes">Yes</button>
                   <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="no">No</button>
                 </div>
               </div>
               <div class="flex items-center justify-between py-1">
-                <span class="text-sm">International shipping?</span>
+                <span class="text-sm">International shipping? *</span>
                 <div class="flex gap-2" data-yn="delivery.internationalShipping">
                   <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="yes">Yes</button>
                   <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="no">No</button>
                 </div>
               </div>
+              <p class="field-error mt-2 hidden" data-error="delivery">Please answer all delivery questions</p>
             </div>
           </div>
 
           <!-- STEP 9: Timeline -->
           <div class="step" data-step="timeline">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Timeline</h2>
-            <p class="text-[var(--text-muted)] text-sm mb-8">When do you need this live?</p>
-
+            <p class="text-[var(--text-muted)] text-sm mb-8">When do you need this live? *</p>
             <label class="block text-xs font-mono uppercase tracking-wider text-[var(--text-muted)] mb-3">Select a timeline</label>
             <div id="timeline-grid" class="grid grid-cols-2 gap-3"></div>
-            <p class="field-error mt-3 hidden" data-error="timeline.timeline"></p>
+            <p class="field-error mt-3 hidden" data-error="timeline.timeline">Please select a timeline</p>
           </div>
 
           <!-- STEP 10: Notes -->
           <div class="step" data-step="notes">
             <h2 class="font-display text-2xl sm:text-3xl font-medium mb-1">Anything else?</h2>
             <p class="text-[var(--text-muted)] text-sm mb-8">Additional notes, references, or requirements.</p>
-
             <textarea data-field="notes.additional" class="field-input w-full px-4 py-3 text-sm" rows="6" placeholder="Share anything that will help us understand the project better..."></textarea>
           </div>
-
         </form>
 
         <!-- Navigation -->
@@ -388,7 +404,6 @@
         </div>
         <p id="submit-error" class="field-error text-right mt-3 hidden"></p>
       </div>
-
       <p class="text-center font-mono text-[10.5px] text-[var(--text-faint)] tracking-wider mt-6 uppercase">Your answers are only used to scope this project</p>
     </div>
   </section>
@@ -409,12 +424,11 @@
       <pre id="summary-box" class="hidden text-left font-mono text-[11px] leading-relaxed text-[var(--text-muted)] bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 mt-6 overflow-auto max-h-96 whitespace-pre-wrap"></pre>
     </div>
   </section>
-
 </div>
 
 <script>
 /* =========================================================================
-   FORM STATE — Formik-pattern (values / errors / touched)
+   FULLY FUNCTIONAL WITH STRONG VALIDATION — ALL QUESTIONS MUST BE ANSWERED
    ========================================================================= */
 const formik = {
   values: {
@@ -431,7 +445,6 @@ const formik = {
   },
   errors: {},
   touched: {},
-
   setFieldValue(path, value){
     const [group, key] = path.split('.');
     this.values[group][key] = value;
@@ -440,15 +453,9 @@ const formik = {
     const [group, key] = path.split('.');
     return this.values[group][key];
   },
-  setFieldTouched(path){
-    this.touched[path] = true;
-  },
-  setFieldError(path, message){
-    this.errors[path] = message;
-  },
-  clearFieldError(path){
-    delete this.errors[path];
-  }
+  setFieldTouched(path){ this.touched[path] = true; },
+  setFieldError(path, message){ this.errors[path] = message; },
+  clearFieldError(path){ delete this.errors[path]; }
 };
 
 const STEP_ORDER = ['business','goals','design','branding','ecommerce','admin','payment','delivery','timeline','notes'];
@@ -459,11 +466,7 @@ const STEP_NAMES = {
 };
 let currentIndex = 0;
 
-function activeSteps(){
-  return STEP_ORDER;
-}
-
-/* Option Data */
+// ---- Option data ----
 const GOALS = ['Increase sales','Generate leads','Sell online','Improve branding','Accept online payments','Build customer trust','Showcase products','Other'];
 const STYLES = ['Minimal','Luxury','Modern','Elegant','Playful','Bold','Premium','Dark Theme','Light Theme'];
 const BRANDING_ITEMS = [
@@ -485,66 +488,76 @@ const TIMELINE_OPTIONS = [
   { v:'1 Month', icon:'calendar-days' }, { v:'Flexible', icon:'infinity' }
 ];
 
-/* Render Functions */
+// ---- RENDER: goals & style (clickable pills) ----
 function renderPillGroup(containerId, items, groupPath){
   const el = document.getElementById(containerId);
-  el.innerHTML = items.map(v => `<span class="pill px-4 py-2.5 text-xs font-medium border border-[var(--border)] rounded-lg cursor-pointer" data-value="${escapeAttr(v)}" data-group="${groupPath}">${v}</span>`).join('');
+  if(!el) return;
+  el.innerHTML = items.map(v => `<span class="pill px-4 py-2.5 text-xs font-medium border border-[var(--border)] rounded-lg" data-value="${escapeAttr(v)}" data-group="${groupPath}">${v}</span>`).join('');
   el.querySelectorAll('.pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      pill.classList.toggle('selected');
-      const [g,k] = groupPath.split('.');
-      const value = pill.dataset.value;
+    pill.addEventListener('click', function(e){
+      e.stopPropagation();
+      this.classList.toggle('selected');
+      const [g,k] = this.dataset.group.split('.');
+      const value = this.dataset.value;
       const arr = formik.values[g][k];
-      const i = arr.indexOf(value);
-      if(i > -1) arr.splice(i,1); else arr.push(value);
+      const idx = arr.indexOf(value);
+      if(idx > -1) arr.splice(idx,1);
+      else arr.push(value);
       if(groupPath === 'goals.selected'){
-        document.getElementById('goals-other-wrap').classList.toggle('hidden', !arr.includes('Other'));
+        const wrap = document.getElementById('goals-other-wrap');
+        if(wrap) wrap.classList.toggle('hidden', !arr.includes('Other'));
       }
+      const errEl = document.querySelector(`[data-error="${groupPath}"]`);
+      if(errEl) errEl.classList.add('hidden');
     });
   });
 }
 
+// ---- render selectable grid (timeline) ----
 function renderSelectableGrid(containerId, items, groupPath, mode, iconFn){
   const el = document.getElementById(containerId);
+  if(!el) return;
   el.innerHTML = items.map(item => {
     const value = item.v || item;
     const icon = iconFn ? iconFn(item) : null;
-    return `
-      <div class="select-card p-4 sm:p-5 border border-[var(--border)] rounded-lg cursor-pointer hover:border-[var(--text-muted)] transition-all" data-value="${escapeAttr(value)}" data-group="${groupPath}" data-mode="${mode}">
-        <div class="flex items-center gap-3">
-          ${icon ? `<i data-lucide="${icon}" class="w-5 h-5 text-[var(--text-muted)]"></i>` : ''}
-          <span class="text-sm font-medium">${value}</span>
-        </div>
-      </div>`;
+    return `<div class="select-card p-4 sm:p-5 border border-[var(--border)] rounded-lg hover:border-[var(--text-muted)] transition-all" data-value="${escapeAttr(value)}" data-group="${groupPath}" data-mode="${mode}">
+      <div class="flex items-center gap-3">
+        ${icon ? `<i data-lucide="${icon}" class="w-5 h-5 text-[var(--text-muted)]"></i>` : ''}
+        <span class="text-sm font-medium">${value}</span>
+      </div>
+    </div>`;
   }).join('');
 
   el.querySelectorAll('.select-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const group = card.dataset.group;
-      const mode = card.dataset.mode;
-      const value = card.dataset.value;
+    card.addEventListener('click', function(){
+      const group = this.dataset.group;
+      const mode = this.dataset.mode;
+      const value = this.dataset.value;
       if(mode === 'single'){
         el.querySelectorAll('.select-card').forEach(c => c.classList.remove('selected', 'bg-white', 'text-black', 'border-white'));
-        card.classList.add('selected', 'bg-white', 'text-black', 'border-white');
+        this.classList.add('selected', 'bg-white', 'text-black', 'border-white');
         formik.setFieldValue(group, value);
+        const errEl = document.querySelector(`[data-error="${group}"]`);
+        if(errEl) errEl.classList.add('hidden');
       }
     });
   });
   lucide.createIcons();
 }
 
+// ---- render Yes/No checklist ----
 function renderYesNoChecklist(containerId, items, groupPath, questionFn){
   const el = document.getElementById(containerId);
+  if(!el) return;
   el.innerHTML = items.map(item => {
     const value = typeof item === 'string' ? item : item.v;
-    return `
-      <div class="flex items-center justify-between gap-4 py-3 border-b border-[var(--border-soft)] last:border-0">
-        <span class="text-sm leading-snug">${questionFn(value)}</span>
-        <div class="flex gap-2 shrink-0" data-yn-array="${groupPath}" data-yn-value="${escapeAttr(value)}">
-          <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="yes">Yes</button>
-          <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="no">No</button>
-        </div>
-      </div>`;
+    return `<div class="flex items-center justify-between gap-4 py-3 border-b border-[var(--border-soft)] last:border-0">
+      <span class="text-sm leading-snug">${questionFn(value)}</span>
+      <div class="flex gap-2 shrink-0" data-yn-array="${groupPath}" data-yn-value="${escapeAttr(value)}">
+        <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="yes">Yes</button>
+        <button type="button" class="yn-btn px-4 py-1.5 text-xs font-medium" data-value="no">No</button>
+      </div>
+    </div>`;
   }).join('');
 
   el.querySelectorAll('[data-yn-array]').forEach(group => {
@@ -552,23 +565,27 @@ function renderYesNoChecklist(containerId, items, groupPath, questionFn){
     const value = group.dataset.ynValue;
     const [gg, kk] = path.split('.');
     group.querySelectorAll('.yn-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', function(){
         group.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+        this.classList.add('selected');
         const arr = formik.values[gg][kk];
         const idx = arr.indexOf(value);
-        if(btn.dataset.value === 'yes'){
+        if(this.dataset.value === 'yes'){
           if(idx === -1) arr.push(value);
-        } else if(idx > -1){
-          arr.splice(idx, 1);
+        } else {
+          if(idx > -1) arr.splice(idx,1);
         }
+        const errEl = document.querySelector(`[data-error="${path}"]`);
+        if(errEl) errEl.classList.add('hidden');
       });
     });
   });
 }
 
+// ---- branding ----
 function renderBranding(){
   const el = document.getElementById('branding-list');
+  if(!el) return;
   el.innerHTML = BRANDING_ITEMS.map(item => `
     <div class="flex items-center justify-between py-3 border-b border-[var(--border-soft)] last:border-0">
       <span class="text-sm">${item.label}</span>
@@ -584,22 +601,24 @@ function renderYesNoToggles(){
   document.querySelectorAll('[data-yn]').forEach(group => {
     const path = group.dataset.yn;
     group.querySelectorAll('.yn-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', function(){
         group.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        formik.setFieldValue(path, btn.dataset.value);
+        this.classList.add('selected');
+        formik.setFieldValue(path, this.dataset.value);
+        const errEl = document.querySelector(`[data-error="${path}"]`);
+        if(errEl) errEl.classList.add('hidden');
       });
     });
   });
 }
 
-function escapeAttr(s){ return s.replace(/"/g,'&quot;'); }
+function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
 
+// ---- inspiration links ----
 function addInspirationField(){
   formik.values.design.inspirationLinks.push('');
   renderInspirationList();
 }
-
 function removeInspirationField(idx){
   formik.values.design.inspirationLinks.splice(idx,1);
   renderInspirationList();
@@ -607,14 +626,16 @@ function removeInspirationField(idx){
 
 function renderInspirationList(){
   const el = document.getElementById('inspiration-list');
-  el.innerHTML = formik.values.design.inspirationLinks.map((val, idx) => `
+  if(!el) return;
+  const links = formik.values.design.inspirationLinks;
+  el.innerHTML = links.map((val, idx) => `
     <div class="flex items-center gap-2">
       <input type="text" value="${escapeAttr(val)}" data-inspiration-idx="${idx}" class="field-input flex-1 px-4 py-3 text-sm" placeholder="https://example.com">
-      ${formik.values.design.inspirationLinks.length > 1 ? `<button type="button" onclick="removeInspirationField(${idx})" class="text-[var(--text-faint)] hover:text-[var(--text)] p-2"><i data-lucide="x" class="w-4 h-4"></i></button>` : ''}
+      ${links.length > 1 ? `<button type="button" onclick="removeInspirationField(${idx})" class="text-[var(--text-faint)] hover:text-[var(--text)] p-2"><i data-lucide="x" class="w-4 h-4"></i></button>` : ''}
     </div>`).join('');
   el.querySelectorAll('[data-inspiration-idx]').forEach(input => {
-    input.addEventListener('input', () => {
-      formik.values.design.inspirationLinks[Number(input.dataset.inspirationIdx)] = input.value;
+    input.addEventListener('input', function(){
+      formik.values.design.inspirationLinks[Number(this.dataset.inspirationIdx)] = this.value;
     });
   });
   lucide.createIcons();
@@ -624,8 +645,8 @@ function bindTextFields(){
   document.querySelectorAll('[data-field]').forEach(input => {
     const path = input.dataset.field;
     input.value = formik.getFieldValue(path) || '';
-    input.addEventListener('input', () => {
-      formik.setFieldValue(path, input.value);
+    input.addEventListener('input', function(){
+      formik.setFieldValue(path, this.value);
       clearError(path);
     });
     input.addEventListener('blur', () => formik.setFieldTouched(path));
@@ -640,7 +661,7 @@ function clearError(path){
   if(inputEl) inputEl.classList.remove('error');
 }
 
-/* Validation */
+// ---- STRONG VALIDATION ----
 const REQUIRED_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validateStep(stepKey){
@@ -648,9 +669,45 @@ function validateStep(stepKey){
   const v = formik.values;
 
   if(stepKey === 'business'){
-    if(v.business.email.trim() && !REQUIRED_EMAIL.test(v.business.email)){
-      errs['business.email'] = 'That email doesn\'t look quite right.';
+    if(!v.business.businessName.trim()) errs['business.businessName'] = 'Business name is required';
+    if(!v.business.contactName.trim()) errs['business.contactName'] = 'Contact name is required';
+    if(!v.business.email.trim() || !REQUIRED_EMAIL.test(v.business.email)) errs['business.email'] = 'Valid email is required';
+    if(!v.business.phone.trim()) errs['business.phone'] = 'Phone number is required';
+    if(!v.business.industry.trim()) errs['business.industry'] = 'Industry is required';
+    if(!v.business.description.trim()) errs['business.description'] = 'Business description is required';
+  }
+  else if(stepKey === 'goals'){
+    if(!v.goals.purpose.trim()) errs['goals.purpose'] = 'Please describe what your store should do';
+    if(v.goals.selected.length === 0) errs['goals.selected'] = 'Please select at least one goal';
+  }
+  else if(stepKey === 'design'){
+    const hasValidLink = v.design.inspirationLinks.some(link => link.trim().length > 0);
+    if(!hasValidLink) errs['design.inspirationLinks'] = 'Please add at least one inspiration link';
+    if(v.design.style.length === 0) errs['design.style'] = 'Please select at least one style';
+  }
+  else if(stepKey === 'branding'){
+    const brandingKeys = ['logo','brandColors','fonts','productImages','productDescriptions'];
+    for(const key of brandingKeys){
+      if(!v.branding[key]) errs['branding'] = 'Please answer all branding questions';
     }
+  }
+  else if(stepKey === 'ecommerce'){
+    if(v.ecommerce.features.length === 0) errs['ecommerce.features'] = 'Please select at least one feature';
+  }
+  else if(stepKey === 'admin'){
+    if(v.admin.permissions.length === 0) errs['admin.permissions'] = 'Please select at least one admin permission';
+  }
+  else if(stepKey === 'payment'){
+    if(v.payment.selected.length === 0) errs['payment.selected'] = 'Please select at least one payment method';
+  }
+  else if(stepKey === 'delivery'){
+    if(!v.delivery.areas.trim()) errs['delivery.areas'] = 'Delivery areas are required';
+    if(!v.delivery.shippingFee.trim()) errs['delivery.shippingFee'] = 'Shipping fee info is required';
+    if(!v.delivery.pickupOption) errs['delivery'] = 'Please answer all delivery questions';
+    if(!v.delivery.internationalShipping) errs['delivery'] = 'Please answer all delivery questions';
+  }
+  else if(stepKey === 'timeline'){
+    if(!v.timeline.timeline) errs['timeline.timeline'] = 'Please select a timeline';
   }
   return errs;
 }
@@ -666,7 +723,7 @@ function showStepErrors(errs){
   });
 }
 
-/* Navigation */
+// ---- navigation ----
 function goToForm(){
   document.getElementById('hero').classList.add('hidden');
   document.getElementById('form-section').classList.remove('hidden');
@@ -685,6 +742,29 @@ function initialRender(){
   renderSelectableGrid('timeline-grid', TIMELINE_OPTIONS, 'timeline.timeline', 'single', i => i.icon);
   renderYesNoToggles();
   bindTextFields();
+  
+  // ---- make inspiration tags clickable ----
+  document.querySelectorAll('.inspo-tag').forEach(tag => {
+    tag.addEventListener('click', function(){
+      this.classList.toggle('selected');
+      // store the selected store name in the inspirationLinks array
+      const storeName = this.dataset.store;
+      const links = formik.values.design.inspirationLinks;
+      // if selected, add the store name as a link (if not already there)
+      if(this.classList.contains('selected')){
+        if(!links.includes(storeName)){
+          links.push(storeName);
+        }
+      } else {
+        const idx = links.indexOf(storeName);
+        if(idx > -1) links.splice(idx, 1);
+      }
+      // clear error if any
+      const errEl = document.querySelector('[data-error="design.inspirationLinks"]');
+      if(errEl) errEl.classList.add('hidden');
+    });
+  });
+  
   lucide.createIcons();
   updateStepMeta();
 }
@@ -695,7 +775,7 @@ function showStep(stepKey){
 }
 
 function updateStepMeta(){
-  const steps = activeSteps();
+  const steps = STEP_ORDER;
   if(currentIndex > steps.length - 1) currentIndex = steps.length - 1;
   const stepKey = steps[currentIndex];
   showStep(stepKey);
@@ -703,7 +783,6 @@ function updateStepMeta(){
   document.getElementById('step-name').textContent = STEP_NAMES[stepKey];
   document.getElementById('progress-fill').style.width = `${((currentIndex+1)/steps.length)*100}%`;
   document.getElementById('prev-btn').style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
-
   const isLast = currentIndex === steps.length - 1;
   document.getElementById('next-btn').innerHTML = isLast
     ? `Submit <i data-lucide="check" class="w-4 h-4"></i>`
@@ -712,16 +791,14 @@ function updateStepMeta(){
 }
 
 function nextStep(){
-  const steps = activeSteps();
+  const steps = STEP_ORDER;
   const stepKey = steps[currentIndex];
   const errs = validateStep(stepKey);
-
   if(Object.keys(errs).length > 0){
     showStepErrors(errs);
     document.querySelector(`.step[data-step="${stepKey}"]`).scrollIntoView({behavior:'smooth', block:'start'});
     return;
   }
-
   if(currentIndex < steps.length - 1){
     currentIndex++;
     updateStepMeta();
@@ -738,17 +815,13 @@ function prevStep(){
   }
 }
 
-/* =========================================================================
-   FORMSPREE SUBMISSION
-   Replace YOUR_FORM_ID with your Formspree form ID from https://formspree.io
-   ========================================================================= */
+// ---- submission ----
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xzdlaljb';
 
 async function submitForm(){
   const nextBtn = document.getElementById('next-btn');
   const errorEl = document.getElementById('submit-error');
   errorEl.classList.add('hidden');
-
   const originalLabel = nextBtn.innerHTML;
   nextBtn.disabled = true;
   nextBtn.style.opacity = '.6';
@@ -770,9 +843,7 @@ async function submitForm(){
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     });
-
     if(!res.ok) throw new Error('Submission failed');
-
     document.getElementById('form-section').classList.add('hidden');
     document.getElementById('success-section').classList.remove('hidden');
     document.getElementById('summary-box').textContent = JSON.stringify(formik.values, null, 2);
